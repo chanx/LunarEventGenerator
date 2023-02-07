@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>Lunar Event Generator</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src='https://cdn.jsdelivr.net/npm/lunar-javascript/lunar.js'></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center">Lunar Event Generator</h1>
+    <div class="row p-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="row g-3 align-items-start">
+            <form class="needs-validation" novalidate>
+              <div class="row gx-3 gy-1">
+                <label for="inputState" class="form-label">Lunar Date</label>
+                <div class="col-4 col-md-3">
+                  <select id="yearOptions" class="form-select" aria-label="Year">
+                  </select>
+                </div>
+                <div class="col-4 col-md-3">
+                  <select id="monthOptions" class="form-select" aria-label="Month" required>
+                    <option selected value="">Month</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                  </select>
+                </div>
+                <div class="col-4 col-md-3">
+                  <select id="dateOptions" class="form-select" aria-label="" required>
+                    <option selected value="">Date</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                  </select>
+                </div>
+                <div class="row g-3">
+                  <div class="col-10">
+                    <label for="eventTitle" class="form-label">Event Title</label>
+                    <input type="text" class="form-control" id="eventTitle" required>
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-10">
+                    <label for="eventDescription" class="form-label">Event Description</label>
+                    <input type="text" class="form-control" id="eventDescription" required>
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-10">
+                    <label for="recurringOptions" class="form-label">Recurring</label>
+                    <select id="recurringOptions" class="form-select" aria-label="" required>
+                      <option></option>
+                      <option value="Monthly">Monthly</option>
+                      <option value="Yearly">Yearly</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row g-3">
+                  <div class="col-10">
+                    <label for="recurringTimesOptions" class="form-label">Recurring Times</label>
+                    <input type="number" class="form-control" id="recurringTimesOptions" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col g-3">
+                  <button type="submit" class="btn btn-primary">Generate Event List</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="resultCard" class="row p-3" style="display:none;">
+      <div class="card gy-3">
+        <div class="card-body">
+          <h4 class="card-title">Event Result</h4>
+          <div class="row g-3 align-items-start">
+            <div class="col-12 g-3" id="lunarDate">
+            </div>
+            <div class="col-12 g-3" id="solarDate">
+            </div>
+            <div class="col-12 g-3" id="eventList">
+            </div>
+          </div>
+          <div class="row g-3 align-items-start">
+            <a class="btn btn-primary download hide" id="downloadLink" download="event.ics">⇩ Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    // console.log(currentMonth)
+    
+    let yearOptions = '<option selected value="">Year</option>';
+    for (let i = 1900; i < (currentYear + 50); i++) {
+      yearOptions += `<option value="${i}">${i}</option>`
+    }
+    document.getElementById("yearOptions").innerHTML = yearOptions;
+
+    // Fetch all the forms we want to apply custom Bootstrap validation styles to
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // Loop over them and prevent submission
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        event.preventDefault()
+        event.stopPropagation()
+        form.classList.add('was-validated')
+        generateEventList()
+      }, false)
+    })
+
+    const generateEventList = () => {
+      let year = document.getElementById("yearOptions").value;
+      let month = document.getElementById("monthOptions").value;
+      let date = document.getElementById("dateOptions").value;
+      let eventTitle = document.getElementById("eventTitle").value;
+      let eventDescription = document.getElementById("eventDescription").value;
+      let recurring = document.getElementById("recurringOptions").value;
+      let recurringTimes = document.getElementById("recurringTimesOptions").value;
+      // console.log(year)
+      let lunarDate = Lunar.fromYmd(year, month, date)
+      // console.log(lunarDate)
+      document.getElementById("lunarDate").innerHTML = `Lunar Calendar Date: ${lunarDate}`;
+      document.getElementById("solarDate").innerHTML = `Solar Calendar Date: ${lunarDate.getSolar().toString()}`;
+
+      let eventList = []
+      let eventListHtml = `Event Detail: </br>Title: ${eventTitle}<br/>Description: ${eventDescription}<br/>Recurring: ${recurring} for ${recurringTimes} times<br/>`
+      let recurringEventYear = currentYear
+      let recurringEventMonth = currentMonth
+      for (let i = 0; i < recurringTimes; i++) {
+        if (recurring == 'Yearly') {
+          eventList.push(Lunar.fromYmd((currentYear + i), month, date).getSolar().toString())
+        }
+        else if (recurring == 'Monthly') {
+          if (recurringEventMonth + i > 12) {
+            recurringEventYear++;
+            recurringEventMonth = recurringEventMonth - 12
+          } 
+          eventList.push(Lunar.fromYmd(recurringEventYear, (recurringEventMonth + i), date).getSolar().toString())
+        }
+      }
+      eventListHtml += '<ol>'
+      eventList.forEach(el => {
+        eventListHtml += `<li>${el}</li>`; 
+      });
+      eventListHtml += '</ul>'
+      document.getElementById("eventList").innerHTML = eventListHtml;
+      document.getElementById("resultCard").style.display = "block";
+
+      makeIcsFile(eventList, eventTitle, eventDescription)
+    }
+
+    var icsFile = null;
+    const makeIcsFile = (eventList, summary, description) => {
+      let icsFileContent = 'BEGIN:VCALENDAR\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\nPRODID:-//Test Cal//EN\nVERSION:2.0\n'
+      eventList.forEach((el) => {
+        const UUIDGeneratorBrowser = () =>
+          ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
+            (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+          );
+        let eventDate = new Date(el).toISOString().split("T")[0].split("-").join("")
+        let eventStamp = new Date(el).toISOString().split("-").join("").split(":").join("").split(".")[0]
+        icsFileContent += `BEGIN:VEVENT\nUID:${UUIDGeneratorBrowser()}\nDTSTART:${eventDate}\nDTEND:${eventDate}\nDTSTAMP:${eventStamp}\nSUMMARY:${summary}\nDESCRIPTION:${description}\nEND:VEVENT\n`
+      })
+      icsFileContent += 'END:VCALENDAR'
+      // console.log(icsFile)
+      var data = new File([icsFileContent], { type: "text/plain" });
+
+      // If we are replacing a previously generated file we need to
+      // manually revoke the object URL to avoid memory leaks.
+      if (icsFile !== null) {
+        window.URL.revokeObjectURL(icsFile);
+      }
+
+      icsFile = window.URL.createObjectURL(data);
+
+      // console.log(icsFile)
+      document.getElementById("downloadLink").href = icsFile
+      return icsFile;
+    }
+  </script>
+</body>
+</html>
